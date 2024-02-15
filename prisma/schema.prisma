@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  //COLUMNS
+  id                String  @id @default(uuid())
+  prod_name         String
+  prod_price        Decimal @db.Decimal(10, 2)
+  prod_offer        Decimal @db.Decimal(3, 0)
+  prod_stock        Decimal @db.Decimal(4, 0)
+  prod_description  String?
+  prod_image        String?
+  prod_category_id  Int     @default(1)
+  prod_affiliate_id Int
+  prod_status_id    Int     @default(1)
+
+  //RELATIONS
+  category  Category      @relation(fields: [prod_category_id], references: [id])
+  affiliate Affiliate     @relation(fields: [prod_affiliate_id], references: [id])
+  status    ProductStatus @relation(fields: [prod_status_id], references: [id])
+
+  //DEFAULT COLUMNS
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  //TABLE NAME
+  @@map("BOLTZ_PRODUCTS")
+}
+
+model Affiliate {
+  //COLUMNS
+  id                 Int     @id @default(autoincrement())
+  affiliate_register String  @unique
+  affiliate_password String
+  affiliate_name     String
+  affiliate_mail     String  @unique
+  affiliate_contact  String  @unique
+  affiliate_logo     String?
+  affiliate_tier     Int
+
+  //DEFAULT COLUMNS
+  createdAt DateTime @default(now())
+  // updatedAt DateTime @updatedAt
+
+  //RELATIONS ENDPOINT
+  products Product[]
+
+  //TABLE NAME
+  @@map("BOLTZ_AFFILIATES")
+}
+
+model Category {
+  //COLUMNS
+  id            Int    @id
+  category_name String @unique
+  category_tier Int
+
+  //RELATIONS ENDPOINT
+  products Product[]
+
+  //TABLE NAME
+  @@map("BOLTZ_CATEGORIES")
+}
+
+model ProductStatus {
+  //COLUMNS
+  id          Int    @id
+  status_name String
+
+  //RELATIONS ENDPOINT
+  products Product[]
+
+  //TABLE NAME
+  @@map("BOLTZ_PRODUCTSTATUS")
+}

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `BOLTZ_PRODUCTS` MODIFY `prod_category_id` INTEGER NOT NULL DEFAULT 1;
